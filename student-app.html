@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#f7faff" />
+  <title>网格学生端</title>
+  <style>
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    :root{--blue:#1768e5;--blue2:#3188f5;--navy:#10264c;--muted:#77849a;--line:#e8eef7;--bg:#f7faff;--shadow:0 8px 24px rgba(26,83,154,.10)}
+    body{margin:0;background:#edf3fb;color:#15233d;font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif}
+    button{font:inherit;color:inherit}
+    .phone{width:min(100%,430px);min-height:100vh;margin:auto;background:linear-gradient(180deg,#f8fbff 0,#fff 72%);overflow:hidden;position:relative}
+    .status{height:34px;padding:8px 20px 0;display:flex;justify-content:space-between;align-items:flex-start;font-size:12px;font-weight:650;color:#101a2b}
+    .topbar{height:55px;padding:0 18px;display:flex;align-items:center;gap:13px}
+    .back{border:0;background:transparent;width:30px;height:38px;padding:0;display:grid;place-items:center;cursor:pointer}
+    .back:before{content:"";width:10px;height:10px;border-left:2px solid var(--navy);border-bottom:2px solid var(--navy);transform:rotate(45deg)}
+    .topbar h1{margin:0;font-size:21px;letter-spacing:.3px;color:#142444}
+    main{padding:0 14px 30px}
+    .hero{height:164px;border-radius:18px;color:#fff;padding:26px 27px;position:relative;overflow:hidden;background:linear-gradient(130deg,#0755e8,#1981f7);box-shadow:0 12px 25px rgba(23,104,229,.28)}
+    .hero:before{content:"";position:absolute;width:190px;height:190px;border:1px solid rgba(255,255,255,.15);border-radius:50%;right:-42px;top:-36px;box-shadow:0 0 0 26px rgba(255,255,255,.035),0 0 0 55px rgba(255,255,255,.025)}
+    .hero:after{content:"";position:absolute;inset:auto -20px -26px 0;height:90px;opacity:.32;background:linear-gradient(155deg,transparent 48%,rgba(255,255,255,.32) 49%,transparent 50%),linear-gradient(25deg,transparent 51%,rgba(255,255,255,.22) 52%,transparent 53%)}
+    .hero h2{position:relative;z-index:1;margin:0 0 12px;font-size:27px;letter-spacing:1px}
+    .hero p{position:relative;z-index:1;margin:6px 0;font-size:15px;opacity:.92}
+    .shield{position:absolute;right:28px;top:47px;width:67px;height:76px;filter:drop-shadow(0 5px 8px rgba(0,31,112,.24));z-index:2}
+    .shield path{fill:rgba(255,255,255,.13);stroke:#fff;stroke-width:2}.shield polyline{fill:none;stroke:#fff;stroke-width:5;stroke-linecap:round;stroke-linejoin:round}
+    .section{margin-top:21px}
+    .section h3{margin:0 0 11px 2px;font-size:18px;color:#132d58;letter-spacing:.4px}
+    .pair{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .action{height:70px;border:1px solid #edf1f7;border-radius:14px;background:#fff;box-shadow:0 6px 18px rgba(31,78,136,.08);display:flex;align-items:center;gap:12px;padding:0 17px;cursor:pointer;transition:.18s}
+    .action:active,.tile:active{transform:scale(.975)}
+    .iconbox{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(145deg,#edf4ff,#f8faff);color:#2475ee;flex:none}
+    .icon{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+    .action span:last-child{font-size:15px;font-weight:600;color:#17233b;white-space:nowrap}
+    .care{margin-top:22px;background:linear-gradient(145deg,#eef6ff,#f8fbff);border-radius:18px;padding:17px 13px 15px;border:1px solid #e7f1ff}
+    .care h3{margin:0 0 14px 3px;font-size:18px;color:#163568}
+    .tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+    .tile{height:108px;border:1px solid #e8eef7;border-radius:15px;background:rgba(255,255,255,.95);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;box-shadow:0 5px 15px rgba(32,80,137,.07);cursor:pointer;transition:.18s}
+    .tile .bubble{width:47px;height:47px;border-radius:50%;display:grid;place-items:center;background:#eaf3ff;color:#2577ef}
+    .tile:nth-child(2) .bubble{background:#fff2d9;color:#ffad1d}.tile:nth-child(3) .bubble{background:#e7f8e9;color:#35bd59}.tile:nth-child(4) .bubble{background:#efeaff;color:#7753e9}.tile:nth-child(5) .bubble{background:#e7f5ff;color:#268ce8}.tile:nth-child(6) .bubble{background:#ffeaf0;color:#f05c82}
+    .tile span{font-size:14px;color:#17233b;white-space:nowrap}
+    .motto{height:65px;display:flex;justify-content:center;align-items:center;gap:12px;color:#8aa9d2;font-size:13px;letter-spacing:2px}
+    .motto i{width:32px;height:1px;background:linear-gradient(90deg,transparent,#a4bee1)}.motto i:last-child{transform:rotate(180deg)}
+    .toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,20px);background:rgba(12,29,54,.9);color:#fff;padding:10px 17px;border-radius:20px;font-size:13px;opacity:0;pointer-events:none;transition:.25s;z-index:10}.toast.show{opacity:1;transform:translate(-50%,0)}
+    .sub-main{padding:0 14px 30px}.card{background:#fff;border:1px solid #e9eff8;border-radius:15px;box-shadow:0 6px 18px rgba(31,78,136,.08);margin-bottom:12px;overflow:hidden}.card-pad{padding:16px}.list-item{padding:15px;border-bottom:1px solid #edf1f7;cursor:pointer}.list-item:last-child{border-bottom:0}.item-top{display:flex;align-items:center;gap:8px}.tag{font-size:12px;padding:3px 7px;border-radius:6px;background:#e7f2ff;color:#1470e6}.tag.green{background:#eaf8ea;color:#38a946}.tag.orange{background:#fff2df;color:#ee7814}.tag.red{background:#ffebed;color:#e8464e}.state{margin-left:auto;font-size:12px;color:#ff7a18}.item-title{font-size:15px;font-weight:700;margin:10px 0 7px;color:#17233b}.item-meta{display:flex;gap:9px;flex-wrap:wrap;color:#8792a4;font-size:11px;line-height:1.5}.info{background:#fff;border:1px solid #e9eff8;border-radius:15px;margin-bottom:12px;padding:2px 15px}.info-row{min-height:48px;display:flex;align-items:center;border-bottom:1px solid #edf1f7;font-size:13px;gap:14px}.info-row:last-child{border-bottom:0}.info-label{color:#8792a4;width:86px;flex:none}.info-value{margin-left:auto;text-align:right;color:#34445d;line-height:1.55}.form-card{background:#fff;border:1px solid #e9eff8;border-radius:15px;padding:16px;margin-bottom:12px;box-shadow:0 6px 18px rgba(31,78,136,.06)}.field{margin-bottom:17px}.field:last-child{margin-bottom:0}.field label{display:block;font-size:14px;font-weight:650;margin-bottom:8px}.required:before{content:"*";color:#e8464e;margin-right:4px}.input,.select,.textarea{width:100%;border:1px solid #dfe7f1;border-radius:10px;background:#fbfdff;padding:10px 12px;outline:0;color:#26364f}.input,.select{height:44px}.textarea{height:104px;resize:vertical}.input:focus,.select:focus,.textarea:focus{border-color:#3188f5;box-shadow:0 0 0 3px rgba(49,136,245,.1)}.upload{min-height:82px;border:1px dashed #8dbdf8;border-radius:11px;background:#f7fbff;color:#2477ed;display:grid;place-items:center;text-align:center;font-size:13px;cursor:pointer;padding:12px}.photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:12px}.photo-thumb{aspect-ratio:1;border-radius:10px;background:linear-gradient(145deg,#dcecff,#f7fbff);border:1px solid #d9e7f7;display:grid;place-items:center;color:#2477ed;font-size:12px;text-align:center;padding:8px}.btn{height:44px;border:1px solid #dce5f0;border-radius:11px;background:#fff;padding:0 16px;cursor:pointer;font-weight:650}.btn-primary{border-color:#1768e5;background:linear-gradient(135deg,#1768e5,#3188f5);color:#fff;box-shadow:0 7px 16px rgba(23,104,229,.18)}.btn-danger{color:#e8464e;border-color:#ffc8cc}.btn-block{width:100%}.actions{display:flex;gap:10px;margin-top:12px}.actions .btn{flex:1}.tip{padding:12px 14px;border-radius:11px;background:#eaf8f0;border:1px solid #c5ead4;color:#268653;font-size:13px;line-height:1.6;margin-bottom:12px}.tip.warn{background:#fff7e8;border-color:#ffe0aa;color:#b36a13}.empty{text-align:center;color:#8792a4;padding:45px 16px}.filters{display:flex;gap:8px;overflow:auto;padding:2px 0 12px}.pill{border:1px solid #e4ebf5;background:#fff;color:#69778d;border-radius:18px;padding:7px 14px;white-space:nowrap}.pill.active{background:#e9f3ff;border-color:#c4ddff;color:#1768e5;font-weight:650}.timeline{padding:8px 0}.timeline-item{position:relative;padding:0 0 20px 25px;color:#53637a;font-size:13px}.timeline-item:before{content:"";position:absolute;left:6px;top:11px;bottom:-2px;width:1px;background:#d9e3ef}.timeline-item:last-child:before{display:none}.timeline-item:after{content:"";position:absolute;left:0;top:4px;width:12px;height:12px;border-radius:50%;background:#fff;border:3px solid #38a946}.timeline-time{font-size:11px;color:#929dab;margin-top:4px}.sheet-mask{position:fixed;inset:0;background:rgba(10,27,52,.48);z-index:30;display:none}.sheet-mask.open{display:block}.sheet{position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:min(100%,430px);max-height:82vh;overflow:auto;background:#f4f8fd;border-radius:20px 20px 0 0}.sheet-head{height:56px;background:#fff;border-bottom:1px solid #e8eef7;padding:0 17px;display:flex;align-items:center;font-weight:700}.sheet-close{margin-left:auto;border:0;background:transparent;font-size:25px}.sheet-body{padding:14px}
+    @media(min-width:431px){.phone{margin:24px auto;border-radius:28px;min-height:900px;box-shadow:0 24px 70px rgba(20,54,95,.18)}}
+  </style>
+</head>
+<body>
+<div class="phone">
+  <div id="screen">
+  <div class="status"><span>09:41</span><span>5G&nbsp; ▰&nbsp; 96%</span></div>
+  <header class="topbar"><button class="back" aria-label="返回"></button><h1>网格学生端</h1></header>
+  <main>
+    <section class="hero">
+      <h2>学生姓名</h2><p>xx学院-xx班</p><p>xx社区-2号楼-1层-102</p>
+      <svg class="shield" viewBox="0 0 72 82" aria-hidden="true"><path d="M36 3 65 15v22c0 20-12 34-29 42C19 71 7 57 7 37V15L36 3Z"/><polyline points="21,39 32,50 52,28"/></svg>
+    </section>
+
+    <section class="section"><h3>事件上报</h3><div class="pair">
+      <button class="action" data-name="事件上报"><span class="iconbox"><svg class="icon"><use href="#bell"/></svg></span><span>事件上报</span></button>
+      <button class="action" data-name="上报记录"><span class="iconbox"><svg class="icon"><use href="#file"/></svg></span><span>上报记录</span></button>
+    </div></section>
+    <section class="section"><h3>矛盾调解</h3><div class="pair">
+      <button class="action" data-name="发起调解"><span class="iconbox"><svg class="icon"><use href="#handshake"/></svg></span><span>发起调解</span></button>
+      <button class="action" data-name="调解记录"><span class="iconbox"><svg class="icon"><use href="#chat"/></svg></span><span>调解记录</span></button>
+    </div></section>
+    <section class="section"><h3>码上修</h3><div class="pair">
+      <button class="action" data-name="扫码报修"><span class="iconbox"><svg class="icon"><use href="#qr"/></svg></span><span>扫码报修</span></button>
+      <button class="action" data-name="我的报修"><span class="iconbox"><svg class="icon"><use href="#tool"/></svg></span><span>我的报修</span></button>
+    </div></section>
+    <section class="care"><h3>轻大解忧专区</h3><div class="tiles">
+      <button class="tile" data-name="咨询"><span class="bubble"><svg class="icon"><use href="#chat"/></svg></span><span>咨询</span></button>
+      <button class="tile" data-name="投诉"><span class="bubble"><svg class="icon"><use href="#alert"/></svg></span><span>投诉</span></button>
+      <button class="tile" data-name="建议"><span class="bubble"><svg class="icon"><use href="#pen"/></svg></span><span>建议</span></button>
+      <button class="tile" data-name="请假"><span class="bubble"><svg class="icon"><use href="#calendar"/></svg></span><span>请假</span></button>
+      <button class="tile" data-name="证明办理"><span class="bubble"><svg class="icon"><use href="#certificate"/></svg></span><span>证明办理</span></button>
+      <button class="tile" data-name="心理咨询"><span class="bubble"><svg class="icon"><use href="#heart"/></svg></span><span>心理咨询</span></button>
+    </div></section>
+    <div class="motto"><i></i><span>让校园服务更简单</span><i></i></div>
+  </main>
+  </div>
+  <div class="toast" role="status"></div>
+</div>
+<div class="sheet-mask" id="sheetMask"><div class="sheet"><div class="sheet-head"><span id="sheetTitle">操作</span><button class="sheet-close" data-action="close-sheet">×</button></div><div class="sheet-body" id="sheetBody"></div></div></div>
+
+<svg width="0" height="0" style="position:absolute"><defs>
+  <symbol id="bell" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></symbol>
+  <symbol id="file" viewBox="0 0 24 24"><path d="M6 2h9l4 4v16H6zM14 2v5h5M9 12h6M9 16h6"/></symbol>
+  <symbol id="handshake" viewBox="0 0 24 24"><path d="m8 12 3 3c1 1 2.5-.5 1.5-1.5l-2-2 1-1 3.5 3.5c1 1 2.5-.5 1.5-1.5l-3-3M2 10l4-4 3 2 3-2 4 2 2-2 4 4-3 4M2 10l5 6M22 10l-5 6"/></symbol>
+  <symbol id="chat" viewBox="0 0 24 24"><path d="M21 14a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4zM8 10h.01M12 10h.01M16 10h.01"/></symbol>
+  <symbol id="qr" viewBox="0 0 24 24"><path d="M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h3v3h-3zM19 14h2v7h-5M14 19v2"/></symbol>
+  <symbol id="tool" viewBox="0 0 24 24"><path d="M14.7 6.3a4 4 0 0 0-5-5L12 3.6 9.6 6 7.3 3.7a4 4 0 0 0 5 5L4 17l3 3 8.3-8.3a4 4 0 0 0 5-5L18 9l-2.4-2.4L18 4.3"/></symbol>
+  <symbol id="alert" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v6M12 17h.01"/></symbol>
+  <symbol id="pen" viewBox="0 0 24 24"><path d="m4 16-1 5 5-1L20 8l-4-4zM14 6l4 4M3 21h18"/></symbol>
+  <symbol id="calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18M8 15l2 2 5-5"/></symbol>
+  <symbol id="certificate" viewBox="0 0 24 24"><path d="M5 2h14v20H5zM8 7h8M8 11h5"/><circle cx="15" cy="16" r="3"/><path d="m13.5 18.5-1 3 2.5-1 2.5 1-1-3"/></symbol>
+  <symbol id="heart" viewBox="0 0 24 24"><path d="M20.8 5.8a5.4 5.4 0 0 0-7.6 0L12 7l-1.2-1.2a5.4 5.4 0 0 0-7.6 7.6L12 22l8.8-8.6a5.4 5.4 0 0 0 0-7.6Z"/></symbol>
+</defs></svg>
+<script>
+  const screen=document.getElementById('screen'),toastEl=document.querySelector('.toast'),sheet=document.getElementById('sheetMask');
+  const homeHTML=screen.innerHTML;
+  let route='home',historyStack=[],timer,photos=0,current=null,serviceType='';
+  const reports=[
+    {id:'SJ-202607-0208',title:'一号楼四层饮水机漏水',type:'设施故障',grid:'科学校区一号楼四层',location:'科学校区一号楼4F大厅饮水机旁',time:'2026-07-06 10:52',status:'已分派',handler:'周老师｜网格员',desc:'四层饮水机底部持续漏水，地面湿滑。',images:['现场全景','漏水细节']},
+    {id:'SJ-202607-0196',title:'一号楼门禁无法正常识别',type:'安防设施',grid:'一号楼大厅',location:'科学校区一号楼东门门禁处',time:'2026-07-06 08:26',status:'处理中',handler:'刘老师｜网格员',desc:'东门门禁连续识别失败，已影响学生正常进出。',images:['门禁面板','识别失败提示']},
+    {id:'SJ-202607-0139',title:'楼道声控灯损坏',type:'公共设施',grid:'科学校区一号楼三层',location:'科学校区一号楼3F西侧楼道',time:'2026-07-04 19:10',status:'已评价',handler:'后勤保障服务中心',desc:'三层西侧楼道声控灯不亮。',images:['楼道现场','灯具位置'],score:5,comment:'处理很快，晚上通行安全多了。'}
+  ];
+  const repairs=[
+    {id:'WX-202607-0108',facility:'1-308消防箱',code:'FAC-XF-0308',location:'一号楼3F东侧',issue:'消防箱门无法关闭',time:'2026-07-07 08:36',handler:'陈师傅',status:'处理中',result:''},
+    {id:'WX-202607-0106',facility:'一号楼东门门禁',code:'FAC-MJ-0001',location:'一号楼东门',issue:'门禁无法正常识别',time:'2026-07-07 07:52',handler:'王师傅',status:'待确认',result:'已更换识别模块并完成测试，门禁恢复正常。'},
+    {id:'WX-202607-0098',facility:'三层声控灯',code:'FAC-ZM-0312',location:'一号楼3F西侧',issue:'声控灯不亮',time:'2026-07-06 19:10',handler:'赵师傅',status:'已完成',result:'已更换灯具并完成通电测试。'}
+  ];
+  const mediations=[
+    {id:'TJ-202607-0036',type:'宿舍关系',time:'今天 10:12',status:'匹配成功',mediator:'李敏｜辅导员',node:'系统自动匹配调解员',result:'待调解员预约',parties:'张同学、李同学'},
+    {id:'TJ-202607-0025',type:'师生沟通',time:'今天 15:20',status:'调解中',mediator:'刘老师｜网格调解员',node:'第一次调解',result:'形成初步共识，7月10日复谈',parties:'陈同学、周老师'},
+    {id:'TJ-202607-0021',type:'权益争议',time:'7月6日 11:30',status:'已完成',mediator:'孙律师｜法律顾问',node:'调解完成',result:'双方达成一致',parties:'王同学、赵同学'}
+  ];
+  const serviceMap={咨询:'学习生活咨询',投诉:'校园服务投诉',建议:'校园治理建议',请假:'学生请假申请',证明办理:'证明办理申请',心理咨询:'心理咨询预约'};
+  function toast(msg){toastEl.textContent=msg;toastEl.classList.add('show');clearTimeout(timer);timer=setTimeout(()=>toastEl.classList.remove('show'),1500)}
+  function go(next,item=null){if(route!=='home')historyStack.push(route);else historyStack=['home'];route=next;current=item;render()}
+  function back(){if(route==='home'){if(history.length>1)history.back();return}route=historyStack.pop()||'home';render()}
+  function page(title,body){return `<div class="status"><span>09:41</span><span>5G&nbsp; ▰&nbsp; 96%</span></div><header class="topbar"><button class="back" data-action="back" aria-label="返回"></button><h1>${title}</h1></header>${body}`}
+  function tagClass(status){return status==='已完成'||status==='已评价'?'green':status==='待确认'||status==='匹配成功'?'orange':status==='处理中'?'red':''}
+  function listItem(x,type,action){return `<div class="list-item" data-action="${action}" data-id="${x.id}"><div class="item-top"><span class="tag ${type.cls||''}">${type.name}</span><span class="state">${x.status}</span></div><div class="item-title">${x.title||x.issue||x.type+'调解'}</div><div class="item-meta"><span>${x.grid||x.facility||x.mediator}</span><span>${x.time}</span></div></div>`}
+  function rows(items){return `<div class="info">${items.map(([k,v])=>`<div class="info-row"><span class="info-label">${k}</span><span class="info-value">${v||'—'}</span></div>`).join('')}</div>`}
+  function upload(label='现场材料'){return `<div class="field"><label>${label}</label><div class="upload" data-action="upload">＋ 拍照、视频、语音或附件<br><span>已添加 ${photos} 项</span></div></div>`}
+  function photoGrid(items=[]){return `<div class="photo-grid">${(items.length?items:['现场图片']).map(x=>`<div class="photo-thumb">${x}</div>`).join('')}</div>`}
+  function requiredMissing(root=screen){return [...root.querySelectorAll('[required]')].some(x=>!x.value.trim())}
+  function reportForm(){return page('事件上报',`<main class="sub-main"><div class="tip">系统将按所属网格自动分派给对应网格员，处理过程可在上报记录中查看。</div><div class="form-card"><div class="field"><label class="required">事件类型</label><select class="select" required><option>公共设施</option><option>安全隐患</option><option>环境卫生</option><option>学生求助</option><option>其他事件</option></select></div><div class="field"><label class="required">所属网格</label><select class="select" required><option>xx社区-2号楼-1层-102</option><option>科学校区一号楼三层</option><option>软件工程2401班</option></select></div><div class="field"><label class="required">定位</label><select class="select" required><option>使用当前定位：科学校区一号楼3F西侧</option><option>手动选择：一号楼大厅</option><option>手动选择：一号楼四层公共区域</option><option>手动选择：软件工程2401班</option></select></div><div class="field"><label class="required">事件标题</label><input class="input" required placeholder="例如：楼道声控灯损坏"></div><div class="field"><label class="required">事件描述</label><textarea class="textarea" required placeholder="请说明发生位置、现场情况和影响"></textarea></div>${upload()}<div class="field"><label>联系电话</label><input class="input" value="138****4268"></div></div><button class="btn btn-primary btn-block" data-action="submit-report">提交上报</button></main>`)}
+  function reportSuccess(){return page('上报成功',`<main class="sub-main"><div class="card card-pad" style="text-align:center;padding:30px 18px"><div style="font-size:46px;color:#38a946">✓</div><h2 style="font-size:20px">事件已提交</h2><p style="color:#66758a;line-height:1.7">系统已按所属网格自动分派<br>可在上报记录中查看处理进度</p></div><div class="actions"><button class="btn" data-action="home">返回首页</button><button class="btn btn-primary" data-action="records">查看记录</button></div></main>`)}
+  function reportList(){return page('上报记录',`<main class="sub-main"><div class="card">${reports.map(r=>listItem(r,{name:r.type,cls:tagClass(r.status)},'report-detail')).join('')}</div><button class="btn btn-primary btn-block" data-action="report">＋ 新增上报</button></main>`)}
+  function reportDetail(r=current||reports[0]){const evaluated=r.status==='已评价';return page('上报详情',`<main class="sub-main"><div class="card card-pad"><div class="item-top"><span class="tag ${tagClass(r.status)}">${r.type}</span><span class="state">${r.status}</span></div><h2 style="font-size:18px;margin:13px 0 6px">${r.title}</h2><div class="item-meta">${r.id}</div></div>${rows([['所属网格',r.grid],['定位',r.location],['上报时间',r.time],['处理人',r.handler],['当前状态',r.status]])}<div class="card card-pad"><b>事件描述</b><p style="color:#66758a;font-size:14px;line-height:1.75">${r.desc}</p>${photoGrid(r.images)}</div><div class="form-card"><b>处理记录</b><div class="timeline"><div class="timeline-item">提交事件上报<div class="timeline-time">${r.time}</div></div><div class="timeline-item">系统自动分派至责任网格<div class="timeline-time">${r.handler}</div></div><div class="timeline-item">${evaluated?'已完成并评价':r.status}<div class="timeline-time">${evaluated?r.comment:'处理过程将持续同步'}</div></div></div></div>${evaluated?`<div class="form-card"><b>我的评价</b><div class="info-row"><span class="info-label">得分</span><span class="info-value">${r.score}分</span></div><div class="info-row"><span class="info-label">评语</span><span class="info-value">${r.comment}</span></div></div>`:''}${evaluated?'':`<button class="btn btn-primary btn-block" data-action="open-evaluate">评价</button>`}</main>`)}
+  function mediationApply(){return page('发起调解',`<main class="sub-main"><div class="tip warn">申请提交后，系统将根据纠纷类型、专业领域、排班和回避关系自动匹配调解员。</div><div class="form-card"><div class="field"><label class="required">纠纷类型</label><select class="select" required><option>宿舍关系</option><option>同学纠纷</option><option>师生沟通</option><option>权益争议</option><option>其他矛盾</option></select></div><div class="field"><label class="required">申请人</label><input class="input" required value="学生姓名"></div><div class="field"><label class="required">其他当事人</label><input class="input" required placeholder="请选择或填写其他当事人"></div><div class="field"><label class="required">事实与诉求</label><textarea class="textarea" required placeholder="请客观描述矛盾事实、争议焦点和希望解决的问题"></textarea></div><div class="field"><label>期望时间</label><input class="input" type="datetime-local" value="2026-07-08T15:00"></div><div class="field"><label>调解方式</label><select class="select"><option>线下面谈</option><option>线上视频</option><option>由调解员协商确定</option></select></div>${upload('相关材料')}</div><button class="btn btn-primary btn-block" data-action="submit-mediation">提交并自动匹配调解员</button></main>`)}
+  function mediationList(){return page('调解记录',`<main class="sub-main"><div class="card">${mediations.map(m=>listItem(m,{name:m.type,cls:tagClass(m.status)},'mediation-detail')).join('')}</div></main>`)}
+  function mediationDetail(m=current||mediations[0]){return page('调解详情',`<main class="sub-main"><div class="card card-pad"><div class="item-top"><span class="tag ${tagClass(m.status)}">${m.type}</span><span class="state">${m.status}</span></div><h2 style="font-size:18px;margin:13px 0 6px">${m.type}调解</h2><div class="item-meta">${m.id}</div></div>${rows([['当事人',m.parties],['调解员',m.mediator],['最新节点',m.node],['记录时间',m.time]])}<div class="form-card"><b>过程记录</b><div class="timeline"><div class="timeline-item">移动端提交调解申请<div class="timeline-time">系统完成保密与回避校验</div></div><div class="timeline-item">人才库自动匹配调解员<div class="timeline-time">${m.mediator}</div></div><div class="timeline-item">${m.node}<div class="timeline-time">${m.result}</div></div></div></div><button class="btn btn-primary btn-block" data-action="add-material">补充材料</button></main>`)}
+  function repairForm(){return page('扫码报修',`<main class="sub-main"><div class="tip">二维码识别成功，设施和位置已自动带入。</div><div class="card card-pad"><div class="item-top"><span class="tag">设施</span><span class="state" style="color:#38a946">信息有效</span></div><h2 style="font-size:18px;margin:13px 0 6px">1-308消防箱</h2><div class="item-meta">QR-FAC-XF-0308 · FAC-XF-0308</div></div>${rows([['设施类型','消防设施'],['设施位置','一号楼3F东侧'],['责任部门','后勤保障服务中心']])}<div class="form-card"><div class="field"><label class="required">故障类型</label><select class="select" required><option>设施无法正常使用</option><option>部件损坏</option><option>存在安全隐患</option><option>其他问题</option></select></div><div class="field"><label class="required">故障描述</label><textarea class="textarea" required>消防箱门无法正常关闭，内部器材有轻微松动。</textarea></div><div class="field"><label>紧急程度</label><select class="select"><option>一般</option><option>较急</option><option>紧急</option></select></div>${upload()}<div class="field"><label>联系人</label><input class="input" value="学生姓名"></div><div class="field"><label>联系电话</label><input class="input" value="138****4268"></div></div><button class="btn btn-primary btn-block" data-action="submit-repair">提交报修</button></main>`)}
+  function repairSuccess(){return page('报修成功',`<main class="sub-main"><div class="card card-pad" style="text-align:center;padding:30px 18px"><div style="font-size:46px;color:#38a946">✓</div><h2 style="font-size:20px">报修已提交</h2><p style="color:#66758a;line-height:1.7">维修单号 WX-202607-0108<br>已推送至设施责任部门维修人员</p></div><div class="actions"><button class="btn" data-action="home">返回首页</button><button class="btn btn-primary" data-action="my-repairs">查看我的报修</button></div></main>`)}
+  function repairList(){return page('我的报修',`<main class="sub-main"><div class="card">${repairs.map(r=>listItem(r,{name:'设施报修',cls:tagClass(r.status)},'repair-detail')).join('')}</div><button class="btn btn-primary btn-block" data-action="repair">＋ 扫码新增报修</button></main>`)}
+  function repairDetail(r=current||repairs[0]){const confirm=r.status==='待确认',done=r.status==='已完成';return page('报修详情',`<main class="sub-main"><div class="card card-pad"><div class="item-top"><span class="tag ${tagClass(r.status)}">设施报修</span><span class="state">${r.status}</span></div><h2 style="font-size:18px;margin:13px 0 6px">${r.issue}</h2><div class="item-meta">${r.id}</div></div>${rows([['设施',r.facility],['设施编码',r.code],['设施位置',r.location],['维修人员',r.handler]])}<div class="form-card"><b>维修进度</b><div class="timeline"><div class="timeline-item">扫码提交报修<div class="timeline-time">${r.time}</div></div><div class="timeline-item">维修人员接单处理<div class="timeline-time">${r.handler}</div></div><div class="timeline-item">${confirm||done?'维修结果已提交':'维修处理中'}<div class="timeline-time">${r.result||'等待维修人员提交结果'}</div></div></div></div>${confirm?'<div class="actions"><button class="btn" data-action="reject-repair">问题未解决</button><button class="btn btn-primary" data-action="confirm-repair">确认维修完成</button></div>':''}</main>`)}
+  function serviceForm(){const title=serviceMap[serviceType]||serviceType;return page(title,`<main class="sub-main"><div class="tip">${serviceType==='心理咨询'?'将为你预约心理健康教育中心老师，内容严格保密。':'提交后将进入轻大解忧专区，由对应部门受理并反馈。'}</div><div class="form-card"><div class="field"><label class="required">主题</label><input class="input" required placeholder="请简要填写主题"></div><div class="field"><label class="required">内容说明</label><textarea class="textarea" required placeholder="请详细描述诉求、问题或建议"></textarea></div><div class="field"><label>期望反馈方式</label><select class="select"><option>站内消息</option><option>电话联系</option><option>线下面谈</option></select></div>${upload('附件材料')}<div class="field"><label>联系电话</label><input class="input" value="138****4268"></div></div><button class="btn btn-primary btn-block" data-action="submit-service">提交</button></main>`)}
+  function openEvaluate(){document.getElementById('sheetTitle').textContent='服务评价';document.getElementById('sheetBody').innerHTML=`<div class="form-card"><div class="field"><label class="required">评分</label><select class="select" required><option>5分 非常满意</option><option>4分 满意</option><option>3分 一般</option><option>2分 不满意</option></select></div><div class="field"><label>评语</label><textarea class="textarea" placeholder="请填写评价内容"></textarea></div></div><button class="btn btn-primary btn-block" data-action="submit-evaluate">提交评价</button>`;sheet.classList.add('open')}
+  function render(){screen.innerHTML=route==='home'?homeHTML:({report:reportForm,reportSuccess,records:reportList,reportDetail,mediationApply,mediationList,mediationDetail,repair:repairForm,repairSuccess,myRepairs:repairList,repairDetail,service:serviceForm}[route]||(()=>homeHTML))()}
+  document.addEventListener('click',e=>{
+    const el=e.target.closest('[data-action],[data-name],.back');if(!el)return;
+    const a=el.dataset.action,name=el.dataset.name,id=el.dataset.id;
+    if(el.classList.contains('back')&&!a)return back();
+    if(name){const map={'事件上报':'report','上报记录':'records','发起调解':'mediationApply','调解记录':'mediationList','扫码报修':'repair','我的报修':'myRepairs'};if(map[name])return go(map[name]);serviceType=name;return go('service')}
+    if(a==='back')return back(); if(a==='home')return go('home'); if(a==='report')return go('report'); if(a==='records')return go('records'); if(a==='repair')return go('repair'); if(a==='my-repairs')return go('myRepairs');
+    if(a==='report-detail')return go('reportDetail',reports.find(x=>x.id===id)); if(a==='repair-detail')return go('repairDetail',repairs.find(x=>x.id===id)); if(a==='mediation-detail')return go('mediationDetail',mediations.find(x=>x.id===id));
+    if(a==='upload'){photos++;el.innerHTML=`已添加现场材料<br><span>共 ${photos} 项，点击继续添加</span>`;return toast('现场材料已添加')}
+    if(a==='submit-report'){if(requiredMissing())return toast('请先填写全部必填项');reports.unshift({id:'SJ-202607-0216',title:'新提交校园事件',type:'学生求助',grid:'xx社区-2号楼-1层-102',location:'当前定位：科学校区一号楼3F西侧',time:'刚刚',status:'已分派',handler:'刘老师｜网格员',desc:'学生端新提交事件，等待网格员处理。',images:['现场图片']});toast('事件已按所属网格自动分派');return setTimeout(()=>go('reportSuccess'),600)}
+    if(a==='submit-repair'){if(requiredMissing())return toast('请先填写全部必填项');repairs.unshift({id:'WX-202607-0112',facility:'1-308消防箱',code:'FAC-XF-0308',location:'一号楼3F东侧',issue:'消防箱门无法关闭',time:'刚刚',handler:'待接单',status:'处理中',result:''});toast('报修已提交并推送维修人员');return setTimeout(()=>go('repairSuccess'),600)}
+    if(a==='submit-mediation'){if(requiredMissing())return toast('请先填写全部必填项');mediations.unshift({id:'TJ-202607-0041',type:'宿舍关系',time:'刚刚',status:'匹配成功',mediator:'李敏｜辅导员',node:'系统自动匹配调解员',result:'待调解员预约',parties:'学生姓名、相关同学'});toast('申请已提交，系统正在自动匹配调解员');return setTimeout(()=>go('mediationList'),700)}
+    if(a==='confirm-repair'){current.status='已完成';toast('已确认维修完成');return render()} if(a==='reject-repair'){current.status='处理中';toast('已反馈问题未解决，维修单重新进入处理中');return render()}
+    if(a==='open-evaluate')return openEvaluate(); if(a==='submit-evaluate'){sheet.classList.remove('open');if(current){current.status='已评价';current.score=5;current.comment='处理及时，结果满意。'}toast('评价已提交');return render()}
+    if(a==='add-material')return toast('补充材料上传已打开');
+    if(a==='submit-service'){if(requiredMissing())return toast('请先填写全部必填项');toast(`${serviceMap[serviceType]||serviceType}已提交`);return setTimeout(()=>go('home'),700)}
+    if(a==='close-sheet')sheet.classList.remove('open');
+  });
+  sheet.addEventListener('click',e=>{if(e.target===sheet)sheet.classList.remove('open')});
+</script>
+</body>
+</html>

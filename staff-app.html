@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0755e8" />
+  <title>网格移动工作端</title>
+  <style>
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    :root{--blue:#1768e5;--blue2:#3188f5;--navy:#13284b;--muted:#8792a4;--line:#e8eef7;--shadow:0 7px 22px rgba(26,83,154,.10)}
+    body{margin:0;background:#edf3fb;color:#172235;font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif}button{font:inherit;color:inherit}
+    .phone{width:min(100%,430px);min-height:100vh;margin:auto;background:linear-gradient(180deg,#f4f9ff,#fff 55%);overflow:hidden}
+    .blue-head{background:linear-gradient(145deg,#0752d9,#0877ef 70%,#3196ff);color:#fff;padding-bottom:24px;position:relative;overflow:hidden}
+    .blue-head:after{content:"";position:absolute;width:230px;height:230px;border:1px solid rgba(255,255,255,.11);border-radius:50%;right:-90px;top:30px;box-shadow:0 0 0 31px rgba(255,255,255,.025),0 0 0 70px rgba(255,255,255,.02)}
+    .status{height:34px;padding:8px 20px 0;display:flex;justify-content:space-between;font-size:12px;font-weight:650;position:relative;z-index:1}
+    .topbar{height:55px;padding:0 18px;display:flex;align-items:center;gap:13px;position:relative;z-index:1}.back{border:0;background:transparent;width:30px;height:38px;padding:0;display:grid;place-items:center}.back:before{content:"";width:10px;height:10px;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(45deg)}.topbar h1{margin:0;font-size:21px;letter-spacing:.3px}
+    .profile{margin:0 15px;height:142px;border:1px solid rgba(255,255,255,.55);border-radius:17px;padding:22px 22px;position:relative;z-index:1;overflow:hidden;background:linear-gradient(120deg,rgba(255,255,255,.08),rgba(255,255,255,.16));box-shadow:0 12px 22px rgba(0,47,137,.22)}
+    .profile:after{content:"";position:absolute;left:-5%;right:-5%;bottom:-42px;height:80px;border:1px solid rgba(255,255,255,.17);border-radius:50%}
+    .profile h2{margin:0 0 7px;font-size:26px}.profile p{margin:4px 0;font-size:14px;opacity:.92}.switch{position:absolute;right:18px;top:49px;border:1px solid rgba(255,255,255,.75);border-radius:22px;background:rgba(255,255,255,.1);color:#fff;padding:8px 13px;display:flex;align-items:center;gap:6px;cursor:pointer}.switch svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2}
+    main{padding:16px 14px 28px}.quick{display:grid;grid-template-columns:1fr 1fr;gap:10px}.quick button{height:69px;border:1px solid #edf1f7;border-radius:14px;background:#fff;box-shadow:var(--shadow);display:flex;align-items:center;justify-content:center;gap:13px;font-size:16px;cursor:pointer}.quick .iconbox{width:40px;height:40px;border-radius:12px;background:#eaf3ff;color:#2477ed;display:grid;place-items:center}
+    .section{margin-top:22px}.section-title{display:flex;align-items:center;justify-content:space-between;margin:0 3px 12px}.section-title h3{margin:0;color:#172b4e;font-size:19px}.section-title h3:before{content:"";display:inline-block;width:4px;height:19px;border-radius:3px;background:var(--blue);margin-right:9px;vertical-align:-3px}.section-title a{color:var(--blue);font-size:13px;text-decoration:none}
+    .task-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.task-grid button{height:104px;border:1px solid #e9eff8;background:#fff;border-radius:15px;box-shadow:0 5px 16px rgba(25,79,145,.08);display:flex;flex-direction:column;justify-content:center;align-items:center;gap:9px;cursor:pointer}.task-grid .bubble{width:45px;height:45px;border-radius:13px;background:linear-gradient(145deg,#e6f1ff,#f5f9ff);color:#2071e8;display:grid;place-items:center}.task-grid button:nth-child(4) .bubble{background:#e4f8f8;color:#12aeb6}.task-grid span:last-child{font-weight:600;font-size:14px}.icon{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+    .todo-list{display:grid;gap:10px}.todo{min-height:88px;border:1px solid #edf1f7;border-radius:14px;background:#fff;box-shadow:0 5px 18px rgba(25,74,135,.075);padding:13px 14px;cursor:pointer}.todo-top,.todo-meta{display:flex;align-items:center}.todo-top{gap:10px}.tag{font-size:12px;padding:3px 7px;border-radius:6px;background:#e7f2ff;color:#1470e6}.todo-title{font-size:15px;font-weight:700;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.state{font-size:12px;color:#ff7a18}.todo-meta{margin-top:10px;color:#929baa;font-size:11px;gap:9px}.todo-meta span:first-child{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tag.green{background:#eaf8ea;color:#38a946}.tag.orange{background:#fff2df;color:#ee7814}.tag.red{background:#ffebed;color:#e8464e}
+    .toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,20px);background:rgba(12,29,54,.9);color:#fff;padding:10px 17px;border-radius:20px;font-size:13px;opacity:0;pointer-events:none;transition:.25s;z-index:10}.toast.show{opacity:1;transform:translate(-50%,0)}
+    button:active,.todo:active{transform:scale(.978)}@media(min-width:431px){.phone{margin:24px auto;border-radius:28px;box-shadow:0 24px 70px rgba(20,54,95,.18)}}
+    /* 内页：延续首页的蓝白卡片语言 */
+    .subpage{min-height:100vh;background:linear-gradient(180deg,#f4f9ff,#fff 55%)}
+    .sub-head{height:89px;background:linear-gradient(145deg,#0752d9,#0877ef 70%,#3196ff);color:#fff;padding-top:34px;display:flex;align-items:center;position:sticky;top:0;z-index:8;box-shadow:0 5px 16px rgba(7,82,217,.18)}
+    .sub-head .back{margin-left:10px;flex:none}.sub-head h1{margin:0;font-size:19px;flex:1;text-align:center}.sub-head .head-action{width:58px;border:0;background:transparent;color:#fff;font-size:13px;padding:0}
+    .sub-main{padding:14px 14px 34px}.card{background:#fff;border:1px solid #e9eff8;border-radius:15px;box-shadow:0 5px 18px rgba(25,74,135,.075);margin-bottom:12px;overflow:hidden}.card-pad{padding:16px}
+    .filter{display:flex;gap:8px;overflow:auto;padding:2px 0 12px}.pill{border:1px solid #e4ebf5;background:#fff;color:#69778d;border-radius:18px;padding:7px 14px;white-space:nowrap}.pill.active{background:#e9f3ff;border-color:#c4ddff;color:#1768e5;font-weight:650}
+    .list-item{padding:15px;border-bottom:1px solid #edf1f7;cursor:pointer}.list-item:last-child{border:0}.item-top{display:flex;align-items:center;gap:8px}.item-title{font-weight:700;font-size:15px;margin:10px 0 7px}.item-state{margin-left:auto;color:#ff7a18;font-size:12px}.item-meta{display:flex;gap:10px;flex-wrap:wrap;color:#8792a4;font-size:11px;line-height:1.5}.chev{color:#a8b2c1;margin-left:auto;font-size:20px}
+    .info{background:#fff;border:1px solid #e9eff8;border-radius:15px;margin-bottom:12px;padding:2px 15px}.info-row{min-height:48px;display:flex;align-items:center;border-bottom:1px solid #edf1f7;font-size:13px;gap:14px}.info-row:last-child{border:0}.info-label{color:#8792a4;width:82px;flex:none}.info-value{margin-left:auto;text-align:right;color:#34445d;line-height:1.55}
+    .form-card{background:#fff;border:1px solid #e9eff8;border-radius:15px;padding:16px;margin-bottom:12px;box-shadow:0 5px 18px rgba(25,74,135,.06)}.field{margin-bottom:17px}.field:last-child{margin-bottom:0}.field label{display:block;font-size:14px;font-weight:650;margin-bottom:8px}.required:before{content:"*";color:#e8464e;margin-right:4px}.input,.select,.textarea{width:100%;border:1px solid #dfe7f1;border-radius:10px;background:#fbfdff;padding:10px 12px;outline:0;color:#26364f}.input,.select{height:44px}.textarea{height:100px;resize:vertical}.input:focus,.select:focus,.textarea:focus{border-color:#3188f5;box-shadow:0 0 0 3px rgba(49,136,245,.1)}
+    .btn{height:44px;border:1px solid #dce5f0;border-radius:11px;background:#fff;padding:0 16px;cursor:pointer;font-weight:650}.btn-primary{border-color:#1768e5;background:linear-gradient(135deg,#1768e5,#3188f5);color:#fff;box-shadow:0 7px 16px rgba(23,104,229,.18)}.btn-danger{color:#e8464e;border-color:#ffc8cc}.btn-block{width:100%}.actions{display:flex;gap:10px;margin-top:12px}.actions .btn{flex:1}.tip{padding:12px 14px;border-radius:11px;background:#eaf8f0;border:1px solid #c5ead4;color:#268653;font-size:13px;line-height:1.6;margin-bottom:12px}.tip.warn{background:#fff7e8;border-color:#ffe0aa;color:#b36a13}
+    .upload{min-height:82px;border:1px dashed #8dbdf8;border-radius:11px;background:#f7fbff;color:#2477ed;display:grid;place-items:center;text-align:center;font-size:13px;cursor:pointer;padding:12px}.empty{text-align:center;color:#8792a4;padding:50px 16px}.check{padding:15px;border-bottom:1px solid #edf1f7}.check:last-child{border:0}.check b{font-size:14px}.check p{font-size:12px;color:#8792a4;margin:5px 0 12px}.segments{display:flex;border:1px solid #e3eaf3;border-radius:9px;overflow:hidden}.segments button{flex:1;border:0;background:#f9fbfd;height:37px;color:#65758c}.segments button.active.ok{background:#eaf8ea;color:#38a946}.segments button.active.bad{background:#ffebed;color:#e8464e}.progress{height:7px;background:#eaf0f7;border-radius:8px;overflow:hidden;margin-top:12px}.progress i{display:block;height:100%;background:linear-gradient(90deg,#1768e5,#4e9bfd)}
+    .sheet-mask{position:fixed;inset:0;background:rgba(10,27,52,.48);z-index:30;display:none}.sheet-mask.open{display:block}.sheet{position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:min(100%,430px);max-height:82vh;overflow:auto;background:#f4f8fd;border-radius:20px 20px 0 0}.sheet-head{height:56px;background:#fff;border-bottom:1px solid #e8eef7;padding:0 17px;display:flex;align-items:center;font-weight:700}.sheet-close{margin-left:auto;border:0;background:transparent;font-size:25px}.sheet-body{padding:14px}.timeline{padding:8px 0}.timeline-item{position:relative;padding:0 0 20px 25px;color:#53637a;font-size:13px}.timeline-item:before{content:"";position:absolute;left:6px;top:11px;bottom:-2px;width:1px;background:#d9e3ef}.timeline-item:last-child:before{display:none}.timeline-item:after{content:"";position:absolute;left:0;top:4px;width:12px;height:12px;border-radius:50%;background:#fff;border:3px solid #38a946}.timeline-time{font-size:11px;color:#929dab;margin-top:4px}
+    .grid-tree{padding:4px}.grid-node{display:flex;align-items:center;gap:10px;padding:13px 10px;border-bottom:1px solid #edf1f7}.grid-node:last-child{border:0}.grid-level{width:28px;height:28px;border-radius:9px;background:#eaf3ff;color:#1768e5;display:grid;place-items:center;font-size:12px;font-weight:700}.grid-node.current{background:#f5f9ff}.grid-node.current .grid-level{background:#1768e5;color:#fff}
+  </style>
+</head>
+<body>
+<div class="phone">
+  <div id="screen"></div>
+  <div class="toast" role="status"></div>
+</div>
+<div class="sheet-mask" id="sheetMask"><div class="sheet"><div class="sheet-head"><span id="sheetTitle">操作</span><button class="sheet-close" data-action="close-sheet">×</button></div><div class="sheet-body" id="sheetBody"></div></div></div>
+<svg width="0" height="0" style="position:absolute"><defs>
+  <symbol id="grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="m15 17 2 2 4-5"/></symbol>
+  <symbol id="clipboard" viewBox="0 0 24 24"><path d="M9 5H6v17h12V5h-3M9 3h6v4H9zM9 12l1 1 2-2M14 12h2M9 17l1 1 2-2M14 17h2"/></symbol>
+  <symbol id="bell" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></symbol>
+  <symbol id="pin" viewBox="0 0 24 24"><path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></symbol>
+  <symbol id="people" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2M16 5a3 3 0 0 1 0 6M17 14a5 5 0 0 1 4 5v1"/></symbol>
+  <symbol id="assign" viewBox="0 0 24 24"><path d="M5 3h14v18H5zM8 8h8M8 12h5M15 16h5m-2-2 2 2-2 2"/></symbol>
+  <symbol id="tool" viewBox="0 0 24 24"><path d="M14.7 6.3a4 4 0 0 0-5-5L12 3.6 9.6 6 7.3 3.7a4 4 0 0 0 5 5L4 17l3 3 8.3-8.3a4 4 0 0 0 5-5L18 9l-2.4-2.4L18 4.3"/></symbol>
+</defs></svg>
+<script>
+  const screen=document.getElementById('screen'),toastEl=document.querySelector('.toast'),sheet=document.getElementById('sheetMask');
+  let timer,route='home',historyStack=[],filter='全部',photos=0,signed=false,checks=[null,null,null,null],current=null;
+  const tasks=[
+    {id:'T001',cat:'巡查',title:'科学校区一号楼日常巡查',grid:'一号楼三层及24间宿舍',reportTime:'2026-07-02 13:21',deadline:'今天 17:00',status:'执行中',tags:['安全巡查'],source:'学生社区中心',desc:'按照巡查模板完成现场检查，异常项必须拍照上报，紧急问题立即联系网格长。'},
+    {id:'T002',cat:'巡查',title:'二号楼公共区域巡查',grid:'二号楼公共区域',reportTime:'2026-07-02 13:21',deadline:'明天 18:00',status:'待执行',tags:['公共区域'],source:'学生社区中心',desc:'检查公共区域卫生、照明、消防和通行情况，异常项及时上报。'},
+    {id:'T003',cat:'巡查',title:'一号楼四层夜间巡查',grid:'科学校区一号楼四层',reportTime:'2026-07-02 13:21',deadline:'今天 22:00',status:'待执行',tags:['夜间巡查'],source:'学生社区中心',desc:'完成夜间安全巡查并记录异常情况。'},
+    {id:'SJ-202607-0182',cat:'事件',title:'一号楼消防通道堆放杂物',grid:'1-308宿舍网格',reportTime:'2026-07-07 09:18',deadline:'今天 11:30',status:'网格员处理中',role:'空间网格员',next:'一号楼三层｜楼层网格长刘老师',tags:['消防安全','通道占用'],desc:'一号楼三层东侧消防通道堆放纸箱和废旧桌椅，影响人员通行。现场上报图片2张。',flowRecords:[
+      {content:'接单并到场核实，已联系宿舍成员清理通道。',person:'刘老师',time:'2026-07-07 09:36'},
+      {content:'学生上报消防通道堆放杂物。',person:'张同学',time:'2026-07-07 09:18'}
+    ]},
+    {id:'SJ-202607-0196',cat:'事件',title:'一号楼门禁无法正常识别',grid:'一号楼三层',reportTime:'2026-07-07 10:02',deadline:'今天 14:30',status:'楼层网格长处理中',role:'楼层网格长',next:'科学校区一号楼｜楼栋网格长李老师',tags:['设施故障','出入管理'],desc:'东门门禁连续识别失败，已影响学生正常进出。',flowRecords:[
+      {content:'上报至楼层网格长，建议协调维修人员排查门禁设备。',person:'刘老师',time:'2026-07-07 10:20'},
+      {content:'完成现场初步核实，门禁识别模块疑似故障。',person:'王老师',time:'2026-07-07 10:08'},
+      {content:'学生反馈门禁无法正常识别。',person:'李同学',time:'2026-07-07 10:02'}
+    ]},
+    {id:'SJ-202607-0201',cat:'事件',title:'宿舍楼大厅地面积水',grid:'一号楼大厅',reportTime:'2026-07-06 16:12',deadline:'7月6日 18:00',status:'已评价',role:'楼栋网格长',next:'科学校区｜院级网格长赵老师',tags:['环境卫生','已办结'],desc:'大厅入口处雨后积水，存在滑倒风险。',flowRecords:[
+      {content:'学生完成评价。',person:'陈同学',time:'2026-07-06 19:30'},
+      {content:'保洁人员清理积水并设置防滑提示，事件办结。',person:'李老师',time:'2026-07-06 17:18'},
+      {content:'任务下发至楼栋网格长处理。',person:'系统',time:'2026-07-06 16:16'},
+      {content:'学生提交现场图片并上报事件。',person:'陈同学',time:'2026-07-06 16:12'}
+    ],evaluation:{score:5,comment:'处理很及时，现场已经清理干净，防滑提示也补充到位。'}},
+    {id:'TJ-202607-0036',cat:'调解',title:'宿舍关系调解',grid:'计算机学院 / 1-308宿舍',reportTime:'2026-07-07 08:40',deadline:'待与当事人确认',status:'待预约',tags:['宿舍关系'],parties:'张同学、李同学',desc:'因日常沟通和公共空间使用产生分歧，希望通过调解明确后续相处约定。'},
+    {id:'TJ-202607-0028',cat:'调解',title:'同学纠纷调解',grid:'软件学院 / 数据科学2402班',reportTime:'2026-07-06 15:22',deadline:'7月8日 15:00',status:'待调解',tags:['同学纠纷'],parties:'王同学、赵同学',desc:'同学间因课程分组产生分歧，申请中立调解。'},
+    {id:'RW-202607-0088',cat:'交办',title:'软件工程2401班学风督查',grid:'软件工程2401班',reportTime:'2026-07-07 09:10',deadline:'今天 17:00',status:'待接收',tags:['学风督查'],source:'李老师 139****2251',desc:'完成课堂出勤、学习状态和晚自习情况督查，提交过程材料。'},
+    {id:'RW-202607-0081',cat:'交办',title:'暑期宿舍消防安全排查',grid:'1-308宿舍',reportTime:'2026-07-06 11:20',deadline:'7月10日 18:00',status:'执行中',tags:['消防排查'],source:'王老师 138****6012',desc:'逐项排查宿舍消防安全情况并反馈处理建议。'},
+    {id:'WX-202607-0108',cat:'维修',title:'消防箱门无法关闭',grid:'一号楼3F东侧',reportTime:'2026-07-07 09:26',deadline:'未预约',status:'待接单',tags:['消防设施'],asset:'FAC-XF-0308｜1-308消防箱',source:'张同学 138****4268',desc:'消防箱门无法正常关闭，内部器材有轻微松动。'},
+    {id:'WX-202607-0106',cat:'维修',title:'门禁无法正常识别',grid:'一号楼东门',reportTime:'2026-07-07 08:05',deadline:'今天 09:00',status:'已接单',tags:['门禁设备'],asset:'FAC-MJ-0001｜一号楼东门门禁',source:'刘老师 138****6012',desc:'门禁设备无法正常识别校园卡，请到场核实。'}
+  ];
+  const homeHTML=`  <section class="blue-head">
+    <div class="status"><span>09:41</span><span>5G&nbsp; ▪ 96%</span></div>
+    <header class="topbar"><button class="back" data-action="back" aria-label="返回"></button><h1>网格移动工作站</h1></header>
+    <div class="profile"><h2>刘老师</h2><p>网格员</p><p>xx社区-2号楼-1层-102</p><button class="switch" data-name="切换网格"><svg viewBox="0 0 24 24"><path d="M7 7h13l-3-3m3 3-3 3M17 17H4l3 3m-3-3 3-3"/></svg>切换网格</button></div>
+  </section>
+  <main>
+    <div class="quick">
+      <button data-name="责任网格"><span class="iconbox"><svg class="icon"><use href="#grid"/></svg></span>责任网格</button>
+      <button data-name="责任清单"><span class="iconbox"><svg class="icon"><use href="#clipboard"/></svg></span>责任清单</button>
+    </div>
+    <section class="section"><div class="section-title"><h3>任务中心</h3></div><div class="task-grid">
+      <button data-name="事件任务"><span class="bubble"><svg class="icon"><use href="#bell"/></svg></span><span>事件任务</span></button>
+      <button data-name="巡查任务"><span class="bubble"><svg class="icon"><use href="#pin"/></svg></span><span>巡查任务</span></button>
+      <button data-name="调解任务"><span class="bubble"><svg class="icon"><use href="#people"/></svg></span><span>调解任务</span></button>
+      <button data-name="交办任务"><span class="bubble"><svg class="icon"><use href="#assign"/></svg></span><span>交办任务</span></button>
+      <button data-name="维修任务"><span class="bubble"><svg class="icon"><use href="#tool"/></svg></span><span>维修任务</span></button>
+    </div></section>
+    <section class="section"><div class="section-title"><h3>待办任务</h3><a href="#" data-name="全部待办">查看全部 ›</a></div><div class="todo-list">
+      ${tasks.slice(0,4).map(t=>`<article class="todo" data-name="${t.title}"><div class="todo-top"><span class="tag ${catClass(t.cat)}">${t.cat}</span><span class="todo-title">${t.title}</span><span class="state">${t.status}</span></div><div class="todo-meta"><span>＋ ${t.grid}</span><time>${t.reportTime}</time></div></article>`).join('')}
+    </div></section>
+  </main>`;
+  const checklistData=[
+    {id:'QD-01',title:'学生社区楼栋巡查责任清单 V1.0',type:'PDF',grid:'科学校区一号楼',deadline:'7月10日前查看',status:'待查看'},
+    {id:'QD-02',title:'空间网格员工作责任清单 V1.3',type:'Word',grid:'一号楼三层',deadline:'7月1日已确认',status:'已查看'}
+  ];
+  const cats={events:'事件',patrols:'巡查',mediations:'调解',assignments:'交办',repairs:'维修'};
+  function catClass(c){return c==='事件'?'red':c==='交办'?'orange':''}
+  const tagList=t=>(t.tags||[]).map(x=>`<span class="tag ${catClass(t.cat)}">${x}</span>`).join('');
+  function toast(msg){toastEl.textContent=msg;toastEl.classList.add('show');clearTimeout(timer);timer=setTimeout(()=>toastEl.classList.remove('show'),1700)}
+  function header(title){return `<div class="sub-head"><button class="back" data-action="back" aria-label="返回"></button><h1>${title}</h1><button class="head-action"></button></div>`}
+  function go(next,item=null,push=true){if(push&&route!=='home')historyStack.push(route);else if(push&&route==='home')historyStack=['home'];route=next;current=item;filter='全部';render()}
+  function back(){if(route==='home'){if(window.history.length>1)window.history.back();return}const next=historyStack.pop()||'home';route=next;filter='全部';render()}
+  function card(t){
+    const title=`<div class="item-title">${t.title}</div>`;
+    const meta=`<div class="item-meta"><span>所属网格：${t.grid}</span><span>上报时间：${t.reportTime}</span></div>`;
+    const top=`<div class="item-top">${tagList(t)||`<span class="tag ${catClass(t.cat)}">${t.cat}</span>`}<span class="item-state">${t.status}</span></div>`;
+    const repairAction=t.cat==='维修'?`<div class="actions"><button class="btn ${t.status==='待接单'?'btn-primary':''}" data-action="${t.status==='待接单'?'accept':'execute'}" data-id="${t.id}">${t.status==='待接单'?'接单':'维修处理'}</button></div>`:'';
+    return `<div class="list-item" data-action="open-item" data-id="${t.id}">${top}${title}${meta}${repairAction}</div>`;
+  }
+  function listPage(cat,title){
+    let source=cat==='全部'?tasks:tasks.filter(x=>x.cat===cat);
+    let options=cat==='全部'?['全部','事件','巡查','调解','交办','维修']:['全部','待处理','执行中','已完成'];
+    if(filter!=='全部'){
+      source=options.includes(filter)&&['事件','巡查','调解','交办','维修'].includes(filter)
+        ?source.filter(x=>x.cat===filter)
+        :source.filter(x=>filter==='待处理'?/待/.test(x.status):filter==='执行中'?/执行|处理|接单|预约|调解/.test(x.status):/完成|办结|评价/.test(x.status));
+    }
+    return `${header(title)}<main class="sub-main"><div class="filter">${options.map(x=>`<button class="pill ${filter===x?'active':''}" data-action="filter" data-filter="${x}">${x}</button>`).join('')}</div><div class="card">${source.length?source.map(card).join(''):'<div class="empty">暂无该状态任务</div>'}</div></main>`;
+  }
+  function detailRows(t){
+    const rows=[
+      ['责任网格',t.grid],
+      ['上报时间',t.reportTime],
+      ['处理期限',t.deadline]
+    ];
+    if(t.cat==='事件')rows.push(['处理角色',t.role]);
+    else if(t.cat==='调解')rows.push(['当事人',t.parties]);
+    else if(t.cat==='维修')rows.push(['报修资产',t.asset]);
+    else rows.push(['下发/联系人',t.source]);
+    return rows.map(([k,v])=>`<div class="info-row"><span class="info-label">${k}</span><span class="info-value">${v||'—'}</span></div>`).join('');
+  }
+  function eventFlow(t){
+    if(t.cat!=='事件')return '';
+    const evaluation=t.status==='已评价'&&t.evaluation?`<div class="form-card"><b>评价内容</b><div class="info-row"><span class="info-label">得分</span><span class="info-value">${t.evaluation.score}分</span></div><div class="info-row"><span class="info-label">评语</span><span class="info-value">${t.evaluation.comment}</span></div></div>`:'';
+    const records=[...(t.flowRecords||[])].sort((a,b)=>b.time.localeCompare(a.time));
+    return `${evaluation}<div class="form-card"><b>流转记录</b><div class="timeline" style="margin-top:15px">${records.map(x=>`<div class="timeline-item">${x.content}<div class="timeline-time">${x.person} · ${x.time}</div></div>`).join('')}</div></div>`;
+  }
+  function detail(t){
+    const btn=t.cat==='事件'
+      ?(t.status==='已评价'?'':(t.status==='待接单'?'<button class="btn btn-primary" data-action="accept">接单并处理</button>':'<button class="btn btn-primary" data-action="execute">进入事件处理</button>'))
+      :t.cat==='维修'
+        ?`<button class="btn btn-primary" data-action="${t.status==='待接单'?'accept':'execute'}">${t.status==='待接单'?'接单':'维修处理'}</button>`
+        :t.cat==='交办'
+          ?(t.status==='待接收'?'<button class="btn btn-primary" data-action="accept">确认接收</button>':'<button class="btn btn-primary" data-action="execute">继续执行</button>')
+          :t.cat==='调解'
+            ?'<button class="btn btn-primary" data-action="execute">填写调解记录</button>'
+            :'<button class="btn btn-primary" data-action="execute">'+(signed?'继续巡查':'签到并开始巡查')+'</button>';
+    return `${header(t.cat+'任务详情')}<main class="sub-main"><div class="card card-pad"><div class="item-top">${tagList(t)||`<span class="tag ${catClass(t.cat)}">${t.cat}</span>`}<span class="item-state">${t.status}</span></div><h2 style="font-size:18px;margin:13px 0 6px">${t.title}</h2><div class="item-meta">${t.id}</div></div><div class="info">${detailRows(t)}</div><div class="card card-pad"><b>${t.cat==='事件'?'事件描述':'任务说明'}</b><p style="color:#66758a;font-size:14px;line-height:1.75;margin-bottom:0">${t.desc}</p></div>${eventFlow(t)}<div class="actions">${t.cat==='事件'&&t.status!=='已评价'?'<button class="btn btn-danger" data-action="transfer">无法处理</button>':''}${btn}</div></main>`;
+  }
+  function responsibility(){return `${header('我的责任网格')}<main class="sub-main"><div class="card card-pad"><div class="item-top"><span class="tag">当前网格</span><span class="item-state" style="color:#38a946">履职中</span></div><h2 style="font-size:19px;margin:13px 0 5px">xx社区-2号楼-1层-102</h2><p style="margin:0;color:#8792a4;font-size:13px">空间网格员：刘老师</p></div><div class="card grid-tree"><div class="grid-node"><span class="grid-level">校</span><div><b>科学校区</b><div class="item-meta">校区网格</div></div></div><div class="grid-node"><span class="grid-level">楼</span><div><b>一号楼</b><div class="item-meta">楼栋网格长：李老师</div></div></div><div class="grid-node"><span class="grid-level">层</span><div><b>一号楼三层</b><div class="item-meta">楼层网格长：刘老师</div></div></div><div class="grid-node current"><span class="grid-level">室</span><div><b>xx社区-2号楼-1层-102</b><div class="item-meta">24名成员 · 8项责任 · 当前网格</div></div></div></div><div class="info"><div class="info-row"><span class="info-label">网格类型</span><span class="info-value">空间网格 / 宿舍</span></div><div class="info-row"><span class="info-label">上级网格</span><span class="info-value">一号楼三层</span></div><div class="info-row"><span class="info-label">责任电话</span><span class="info-value">0371-8660****</span></div></div><button class="btn btn-primary btn-block" data-action="switch-grid">切换责任网格</button></main>`}
+  function checklists(){return `${header('我的责任清单')}<main class="sub-main"><div class="tip">责任清单由上级网格下发，查看后将自动记录确认时间。</div><div class="card">${checklistData.map(x=>`<div class="list-item" data-action="open-checklist" data-id="${x.id}"><div class="item-top"><span class="tag">${x.type}</span><span class="item-state" style="${x.status==='已查看'?'color:#38a946':''}">${x.status}</span></div><div class="item-title">${x.title}</div><div class="item-meta"><span>下发网格：${x.grid}</span><span>${x.deadline}</span></div></div>`).join('')}</div></main>`}
+  function checklistDetail(x){return `${header('责任清单详情')}<main class="sub-main"><div class="card card-pad"><span class="tag">${x.type}</span><h2 style="font-size:18px;line-height:1.5">${x.title}</h2><div class="item-meta">版本号 V1.0 · 下发网格：${x.grid}</div></div><div class="form-card"><b>主要责任事项</b><div class="timeline" style="margin-top:15px"><div class="timeline-item">每日完成责任区域安全巡查<div class="timeline-time">发现问题及时上报并跟踪闭环</div></div><div class="timeline-item">定期联系网格内重点人员<div class="timeline-time">记录诉求、风险和帮扶情况</div></div><div class="timeline-item">接收并处理网格事件<div class="timeline-time">超出权限的事项按层级流转</div></div><div class="timeline-item">按要求完成交办任务<div class="timeline-time">全过程留痕，结果可追溯</div></div></div></div><button class="btn btn-primary btn-block" data-action="confirm-checklist">${x.status==='已查看'?'已查看（再次预览）':'已阅读并确认'}</button></main>`}
+  function patrolExecute(){return `${header('移动巡查')}<main class="sub-main"><div class="tip ${signed?'':'warn'}">${signed?'已完成定位签到：一号楼三层':'请在责任网格现场完成定位签到后开始检查。'}</div>${signed?'':`<button class="btn btn-primary btn-block" data-action="checkin" style="margin-bottom:12px">定位签到</button>`}<div class="card">${['消防通道保持畅通','消防器材状态正常','公共区域卫生整洁','门窗与用电设施安全'].map((x,i)=>`<div class="check"><b>${i+1}. ${x}</b><p>${i===0?'不得堆放纸箱、桌椅等影响通行的物品':'现场核对责任清单标准并留痕'}</p><div class="segments"><button class="${checks[i]==='ok'?'active ok':''}" data-action="set-check" data-index="${i}" data-value="ok">正常</button><button class="${checks[i]==='bad'?'active bad':''}" data-action="set-check" data-index="${i}" data-value="bad">异常</button></div>${checks[i]==='bad'?'<div class="upload" data-action="upload" style="margin-top:10px">＋ 添加异常照片和说明</div>':''}</div>`).join('')}</div><div class="actions"><button class="btn btn-primary" data-action="submit">提交巡查记录</button></div></main>`}
+  function execute(t){
+    if(t.cat==='巡查')return patrolExecute(t);
+    let body='';
+    if(t.cat==='事件')body=`<div class="field"><label>当前节点</label><input class="input" readonly value="${t.grid}｜${t.role}"></div><div class="field"><label class="required">现场核实结果</label><textarea class="textarea" required>${t.desc}</textarea></div><div class="field"><label class="required">处理措施</label><textarea class="textarea" required placeholder="说明已采取的措施和处理结果"></textarea></div><div class="field"><label>办结方式</label><select class="select"><option>现场处理并办结</option><option>持续跟进</option><option>需要上级协同</option></select></div>`;
+    if(t.cat==='调解')body=`<div class="field"><label>案件</label><input class="input" readonly value="${t.id}｜${t.title}"></div><div class="field"><label class="required">调解时间</label><input class="input" type="datetime-local" value="2026-07-08T15:00"></div><div class="field"><label class="required">地点/方式</label><select class="select"><option>学生社区会谈室2</option><option>线上视频</option><option>综合楼A203</option></select></div><div class="field"><label>到场情况</label><select class="select"><option>待确认</option><option>全部到场</option><option>部分到场</option></select></div><div class="field"><label class="required">调解过程</label><textarea class="textarea" required placeholder="记录当事人陈述、争议焦点、调解建议与阶段共识"></textarea></div><div class="field"><label>阶段结果</label><select class="select"><option>继续调解</option><option>达成一致</option><option>调解不成</option></select></div>`;
+    if(t.cat==='交办')body=`<div class="field"><label class="required">过程反馈</label><textarea class="textarea" required placeholder="填写执行情况、发现问题和完成结果"></textarea></div><div class="field"><label>需协调事项</label><textarea class="textarea" placeholder="如有困难请说明"></textarea></div>`;
+    if(t.cat==='维修')body=`<div class="field"><label class="required">故障核实</label><textarea class="textarea" required>${t.desc}</textarea></div><div class="field"><label class="required">维修处理结果</label><textarea class="textarea" required placeholder="说明维修措施、更换部件和处理结果"></textarea></div>`;
+    const title=t.cat==='调解'?'填写调解记录':t.cat+'任务处理';
+    const submitText=t.cat==='维修'?'提交结果':'提交处理结果';
+    return `${header(title)}<main class="sub-main"><div class="form-card">${body}<div class="field"><label>现场材料</label><div class="upload" data-action="upload">＋ 拍照、视频、语音或附件<br><span>已添加 ${photos} 项</span></div></div></div><div class="actions"><button class="btn btn-primary" data-action="submit">${submitText}</button></div></main>`;
+  }
+  function switchGrid(){document.getElementById('sheetTitle').textContent='切换责任网格';document.getElementById('sheetBody').innerHTML=`<div class="card"><div class="list-item" data-action="choose-grid" data-grid="xx社区-2号楼-1层-102"><div class="item-title">xx社区-2号楼-1层-102</div><div class="item-meta">空间网格员 · 当前网格</div></div><div class="list-item" data-action="choose-grid" data-grid="软件工程2401班"><div class="item-title">软件工程2401班</div><div class="item-meta">组织网格员</div></div><div class="list-item" data-action="choose-grid" data-grid="一号楼三层"><div class="item-title">一号楼三层</div><div class="item-meta">楼层网格长</div></div></div>`;sheet.classList.add('open')}
+  function transfer(){document.getElementById('sheetTitle').textContent='无法处理 / 继续流转';document.getElementById('sheetBody').innerHTML=`<div class="tip warn">事件将按空间网格层级流转，当前操作记录会完整保留。</div><div class="form-card"><div class="field"><label class="required">流转方式</label><select class="select"><option>上报至上级网格长</option><option>下发至其他网格（网格长专用）</option></select></div><div class="field"><label class="required">目标节点</label><select class="select"><option>${current.next}</option></select></div><div class="field"><label class="required">无法处理原因</label><select class="select"><option>超出当前网格处置能力</option><option>需要上级统筹协调</option><option>需要跨网格处理</option></select></div><div class="field"><label class="required">现场核实与流转说明</label><textarea class="textarea" placeholder="说明现场情况、已采取措施及继续流转原因"></textarea></div><div class="upload" data-action="upload">＋ 添加现场材料</div></div><button class="btn btn-primary btn-block" data-action="confirm-transfer">确认流转至目标网格</button>`;sheet.classList.add('open')}
+  function render(){window.scrollTo(0,0);if(route==='home'){screen.innerHTML=homeHTML;return}if(route==='responsibility')screen.innerHTML=`<div class="subpage">${responsibility()}</div>`;else if(route==='checklists')screen.innerHTML=`<div class="subpage">${checklists()}</div>`;else if(route==='checklistDetail')screen.innerHTML=`<div class="subpage">${checklistDetail(current)}</div>`;else if(route==='all')screen.innerHTML=`<div class="subpage">${listPage('全部','全部待办')}</div>`;else if(cats[route])screen.innerHTML=`<div class="subpage">${listPage(cats[route],cats[route]+'任务')}</div>`;else if(route==='detail')screen.innerHTML=`<div class="subpage">${detail(current)}</div>`;else if(route==='execute')screen.innerHTML=`<div class="subpage">${execute(current)}</div>`}
+  render();
+  document.addEventListener('click',e=>{
+    const el=e.target.closest('[data-action],[data-name]');if(!el)return;
+    const a=el.dataset.action,name=el.dataset.name,id=el.dataset.id;
+    if(id)current=tasks.find(x=>x.id===id)||current;
+    if(name){e.preventDefault();const map={'责任网格':'responsibility','责任清单':'checklists','事件任务':'events','巡查任务':'patrols','调解任务':'mediations','交办任务':'assignments','维修任务':'repairs','全部待办':'all'};if(map[name])return go(map[name]);const t=tasks.find(x=>x.title===name);if(t)return go('detail',t);if(name==='切换网格')return switchGrid()}
+    if(a==='back')back();
+    if(a==='filter'){filter=el.dataset.filter;render()}
+    if(a==='open-item')go('detail',current);
+    if(a==='open-checklist')go('checklistDetail',checklistData.find(x=>x.id===el.dataset.id));
+    if(a==='confirm-checklist'){current.status='已查看';toast('责任清单已确认，查看记录已保存');render()}
+    if(a==='switch-grid')switchGrid();
+    if(a==='close-sheet')sheet.classList.remove('open');
+    if(a==='choose-grid'){sheet.classList.remove('open');document.querySelector('.profile p:last-of-type')?.replaceChildren(el.dataset.grid);toast('已切换至 '+el.dataset.grid)}
+    if(a==='accept'){current.status=current.cat==='维修'?'已接单':'处理中';toast(current.cat==='维修'?'接单成功':'接收成功，任务已进入处理中');current.cat==='维修'?render():setTimeout(()=>go('execute',current,false),450)}
+    if(a==='execute')go('execute',current);
+    if(a==='transfer')transfer();
+    if(a==='confirm-transfer'){sheet.classList.remove('open');current.status='已流转上级';current.flowRecords=[{content:'无法处理，已流转至上级网格长。',person:'刘老师',time:'2026-07-07 10:30'},...(current.flowRecords||[])];toast('已按网格层级流转');setTimeout(()=>back(),500)}
+    if(a==='checkin'){signed=true;toast('签到成功，定位有效');render()}
+    if(a==='set-check'){checks[Number(el.dataset.index)]=el.dataset.value;render()}
+    if(a==='upload'){photos++;el.innerHTML=`已添加现场材料<br><span>共 ${photos} 项，点击继续添加</span>`;toast('现场材料已添加')}
+    if(a==='submit'){const missing=[...screen.querySelectorAll('[required]')].some(x=>!x.value.trim());if(missing)return toast('请先填写全部必填项');if(current.cat==='巡查'&&(!signed||checks.some(x=>!x)))return toast(!signed?'请先完成现场签到':'请完成全部检查项');current.status=current.cat==='调解'?'调解中':'已处理';toast('提交成功，处理记录已同步');setTimeout(()=>{route=cats[Object.keys(cats).find(k=>cats[k]===current.cat)]?Object.keys(cats).find(k=>cats[k]===current.cat):'all';historyStack=['home'];render()},650)}
+  });
+  sheet.addEventListener('click',e=>{if(e.target===sheet)sheet.classList.remove('open')});
+</script>
+</body>
+</html>
